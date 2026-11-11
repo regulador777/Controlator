@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080b0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CONTROLATOR">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>CONTROLATOR</title>
+<style>
+:root{--bg:#080b0a;--panel:#111816;--panel2:#17211c;--line:#26372e;--green:#7cff35;--green2:#39c96b;--gold:#e5c35c;--text:#f2f6f2;--muted:#9aa99f;--red:#ff6868;--yellow:#ffd166}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at top,#14241a 0,#080b0a 48%);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 calc(84px + env(safe-area-inset-bottom));}
+header{padding:18px 18px 10px;display:flex;align-items:center;gap:12px} header img{width:58px;height:58px;border-radius:15px;object-fit:cover;border:1px solid #456c3c} h1{font-size:20px;letter-spacing:1.5px;margin:0} .sub{font-size:11px;color:var(--muted);margin-top:4px}
+main{padding:8px 15px;max-width:700px;margin:auto}.page{display:none}.page.active{display:block}
+h2{font-size:19px;margin:14px 2px}.muted{color:var(--muted)} .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:17px;padding:14px;margin-bottom:10px}.label{color:var(--muted);font-size:12px}.value{font-size:22px;font-weight:750;margin-top:7px}.green{color:var(--green)}.red{color:var(--red)}.gold{color:var(--gold)}
+button,.btn{border:0;border-radius:13px;padding:13px 15px;background:var(--green);color:#081008;font-weight:750;font-size:14px;cursor:pointer}.secondary{background:#24332a;color:var(--text);border:1px solid var(--line)}.danger{background:#3a2020;color:#ffb2b2}.full{width:100%}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0}.bar{height:10px;background:#26332b;border-radius:20px;overflow:hidden;margin:10px 0}.bar>span{display:block;height:100%;background:linear-gradient(90deg,#35c96a,var(--green));border-radius:20px}
+input,select{width:100%;background:#0b100d;color:var(--text);border:1px solid #34473b;border-radius:11px;padding:12px;font-size:15px;margin:5px 0 12px;outline:none}label{font-size:12px;color:var(--muted)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.listitem{display:flex;justify-content:space-between;gap:10px;padding:12px 2px;border-bottom:1px solid var(--line);align-items:center}.small{font-size:12px;color:var(--muted)}.pill{font-size:11px;padding:4px 8px;border-radius:30px;background:#26352b;color:var(--green)}.warning{background:#382e18;color:var(--yellow);padding:11px;border-radius:12px;font-size:13px;margin:10px 0}.nav{position:fixed;bottom:0;left:0;right:0;padding:9px 7px calc(9px + env(safe-area-inset-bottom));background:#0b100ef2;border-top:1px solid var(--line);display:flex;justify-content:space-around;z-index:5;backdrop-filter:blur(14px)}.nav button{background:none;color:var(--muted);padding:8px 6px;font-size:11px}.nav button.sel{color:var(--green)}.nav span{display:block;font-size:19px;margin-bottom:3px}.voice{background:linear-gradient(135deg,#a2ff58,#37c96b);width:100%;padding:16px;font-size:16px}.hidden{display:none!important}.empty{color:var(--muted);text-align:center;padding:20px}.sectiontitle{display:flex;justify-content:space-between;align-items:center}.sectiontitle h2{margin-bottom:10px}
+</style>
+</head>
+<body>
+<header><img src="icon-192.png" alt="CONTROLATOR"><div><h1>CONTROLATOR</h1><div class="sub">TU DINERO. TU CONTROL. TU CASA.</div></div></header>
+<main>
+<section id="home" class="page active">
+ <div class="sectiontitle"><h2>Resumen del mes</h2><span class="pill" id="monthLabel"></span></div>
+ <div class="grid">
+  <div class="card"><div class="label">Ingresos</div><div class="value green" id="incomeTotal">$0</div></div>
+  <div class="card"><div class="label">Gastos</div><div class="value red" id="expenseTotal">$0</div></div>
+  <div class="card"><div class="label">Balance</div><div class="value" id="balance">$0</div></div>
+  <div class="card"><div class="label">Ahorro confirmado</div><div class="value gold" id="savedTotal">$0</div></div>
+ </div>
+ <div class="card"><div class="label">Disponible después de gastos</div><div class="value green" id="available">$0</div><div class="small">El ahorro potencial no cuenta como ahorro hasta que lo registres.</div></div>
+ <div class="card"><div class="sectiontitle"><b>Objetivo: construir tu casa 🏠</b><span class="small" id="goalPct">Meta sin definir</span></div><div class="bar"><span id="goalBar" style="width:0%"></span></div><div class="small" id="goalText">Registra tu meta y tus aportes.</div></div>
+ <div class="card"><b>Comida chatarra esta semana</b><div class="value" id="junkCount">0 / 2</div><div class="bar"><span id="junkBar" style="width:0%"></span></div><div class="small" id="junkNote">Límite semanal: 2 consumos.</div></div>
+ <div class="actions"><button onclick="showPage('record')">＋ Registrar movimiento</button><button class="secondary" onclick="showPage('history')">Ver movimientos</button></div>
+</section>
+<section id="record" class="page">
+ <h2>Registrar movimiento</h2>
+ <div class="card">
+  <button class="voice full" id="voiceBtn">🎙️ Dictar movimiento</button>
+  <p class="small">Ejemplos: “almuerzo 20000”, “hamburguesa 35000 de ayer”, “recibí nómina 1860000”. En iPhone también puedes usar el micrófono del teclado.</p>
+  <div id="voiceStatus" class="small"></div>
+ </div>
+ <div class="card">
+  <label>Tipo de movimiento</label><select id="kind"><option value="expense">Gasto</option><option value="income">Ingreso</option><option value="saving">Aporte a ahorro casa</option></select>
+  <label>Valor (COP)</label><input id="amount" type="number" inputmode="numeric" placeholder="Ej. 20000">
+  <label>Descripción</label><input id="desc" placeholder="Ej. Almuerzo">
+  <label>Categoría</label><select id="category"></select>
+  <div class="formgrid"><div><label>Fecha</label><input id="date" type="date"></div><div><label>Nota (opcional)</label><input id="note" placeholder="Detalle"></div></div>
+  <button class="full" onclick="addMovement()">Guardar movimiento</button>
+ </div>
+</section>
+<section id="history" class="page">
+ <div class="sectiontitle"><h2>Movimientos</h2><button class="secondary" onclick="exportData()">Exportar copia</button></div>
+ <div class="card"><label>Filtrar por mes</label><input type="month" id="filterMonth" onchange="renderHistory()"></div>
+ <div id="movementList" class="card"></div>
+</section>
+<section id="debts" class="page">
+ <h2>Control de deudas</h2><div id="debtList"></div>
+ <div class="card"><b>Gastos fijos mensuales</b><div class="value" id="fixedTotal">$2.364.000</div><div class="small">Incluye las cuotas de los préstamos. Se usan para presupuestar; no se duplican como gasto real hasta registrar el pago.</div></div>
+</section>
+<section id="settings" class="page">
+ <h2>Configuración</h2>
+ <div class="card"><label>Meta de ahorro para la casa (COP)</label><input id="goalInput" type="number" placeholder="Ej. 100000000"><button class="full" onclick="saveGoal()">Guardar meta</button></div>
+ <div class="card"><label>Presupuesto mensual de ocio (COP)</label><input id="funInput" type="number" value="400000"><button class="full" onclick="saveFun()">Guardar presupuesto</button></div>
+ <div class="card"><b>Ingresos fijos</b><div class="value green">$1.860.000</div><div class="small">Nómina Immunity · se proyecta mensualmente. Registra el ingreso real cuando lo recibas para que el balance no cuente dinero que aún no ha llegado.</div></div>
+ <div class="card"><b>Respaldo y privacidad</b><p class="small">Los datos se guardan en este navegador del iPhone. Exporta una copia periódicamente; borrar los datos de Safari puede borrar tus registros.</p><button class="secondary full" onclick="exportData()">Descargar respaldo JSON</button><label>Restaurar respaldo JSON</label><input type="file" id="restoreFile" accept=".json" onchange="restoreData(event)"></div>
+ <button class="danger full" onclick="clearData()">Borrar todos los movimientos</button>
+</section>
+</main>
+<nav class="nav">
+ <button class="sel" data-page="home" onclick="showPage('home')"><span>⌂</span>Inicio</button>
+ <button data-page="record" onclick="showPage('record')"><span>＋</span>Registrar</button>
+ <button data-page="history" onclick="showPage('history')"><span>☷</span>Historial</button>
+ <button data-page="debts" onclick="showPage('debts')"><span>▤</span>Deudas</button>
+ <button data-page="settings" onclick="showPage('settings')"><span>⚙</span>Ajustes</button>
+</nav>
+<script>
+const KEY='controlator_v1';
+const fixed=[['Arriendo',552000],['Servicios',112000],['Internet',62000],['Gasolina',120000],['Verónica',180000],['Gatos',110000],['Cuota',100000],['Abuela',125000],['Préstamo casa',578000],['Parqueadero',55000],['Préstamo Rappi',270000],['Suscripciones',100000]];
+let data=JSON.parse(localStorage.getItem(KEY)||'{"moves":[],"goal":0,"fun":400000,"debts":{"casa":16,"rappi":10}}');
+const incomeCats=['Nómina Immunity','Variables Immunity','TA Contabilidad'];
+const expenseCats=['Alimentación','Transporte','Vivienda','Servicios','Salud','Entretenimiento','Compras personales','Comida chatarra','Compras impulsivas','Otros'];
+const money=n=>new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(n||0);
+const today=()=>{let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function monthOf(s){return (s||'').slice(0,7)}
+function currentMoves(){return data.moves.filter(x=>monthOf(x.date)===today().slice(0,7))}
+function setupCats(){let k=document.getElementById('kind').value;let a=document.getElementById('category');let cats=k==='income'?incomeCats:k==='saving'?['Ahorro proyecto casa']:expenseCats;a.innerHTML=cats.map(x=>`<option>${x}</option>`).join('')}
+function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('sel',x.dataset.page===id));if(id==='record')document.getElementById('date').value ||=today();render()}
+document.getElementById('kind').addEventListener('change',setupCats);
+function addMovement(){let amount=Number(document.getElementById('amount').value),desc=document.getElementById('desc').value.trim(),kind=document.getElementById('kind').value,date=document.getElementById('date').value||today(),category=document.getElementById('category').value;if(!amount||amount<=0||!desc){alert('Ingresa un valor y una descripción.');return}data.moves.push({id:Date.now(),amount,desc,kind,date,category,note:document.getElementById('note').value});persist();document.getElementById('amount').value='';document.getElementById('desc').value='';document.getElementById('note').value='';showPage('home');}
+function parseVoice(t){let s=t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');let nums=s.match(/\d[\d.,]*/g)||[];if(!nums.length)return null;let raw=nums[nums.length-1].replace(/[.,]/g,'');let amount=Number(raw);let date=today();if(/\bayer\b/.test(s)){let d=new Date();d.setDate(d.getDate()-1);date=d.toISOString().slice(0,10)}else{let m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)date=`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`}
+let income=/recibi|ingreso|nomina|me pagaron|cobre/.test(s),saving=/ahorro|aparte para la casa/.test(s),kind=saving?'saving':income?'income':'expense';let cat=kind==='income'?( /ta contabilidad|ta /.test(s)?'TA Contabilidad':/variable|extra|adicional/.test(s)?'Variables Immunity':'Nómina Immunity'):'Alimentación';
+if(kind==='expense'){if(/hamburg|pizza|perro caliente|comida chatarra|papas fritas|mcdonald|burger|snack|gaseosa/.test(s))cat='Comida chatarra';else if(/gasolina|parqueadero|taxi|uber|bus/.test(s))cat='Transporte';else if(/mercado|supermercado|arroz|pollo|fruta/.test(s))cat='Alimentación';else if(/cafe|caf[eé]|antojo|impulso/.test(s))cat='Compras impulsivas'}
+let desc=t.replace(/\d[\d.,]*/g,'').replace(/\b(de ayer|ayer|de hoy|hoy|del dia)\b/ig,'').trim()||cat;
+return {amount,desc,kind,date,category:cat}}
+function voice(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){document.getElementById('voiceStatus').textContent='El dictado directo no está disponible en este navegador. Usa el micrófono del teclado de iPhone en el campo Descripción y luego completa el valor.';document.getElementById('desc').focus();return}let r=new SR();r.lang='es-CO';r.onresult=e=>{let t=e.results[0][0].transcript,p=parseVoice(t);if(!p){alert('No pude reconocer el valor. Intenta de nuevo.');return}document.getElementById('kind').value=p.kind;setupCats();document.getElementById('amount').value=p.amount;document.getElementById('desc').value=p.desc;document.getElementById('date').value=p.date;document.getElementById('category').value=p.category;document.getElementById('voiceStatus').textContent='Interpretado: '+t+' · Revisa y pulsa Guardar.'};r.onerror=()=>document.getElementById('voiceStatus').textContent='No se pudo usar el micrófono. Prueba el dictado del teclado.';r.start()}
+document.getElementById('voiceBtn').onclick=voice;
+function render(){let m=currentMoves(),inc=m.filter(x=>x.kind==='income').reduce((a,x)=>a+x.amount,0),exp=m.filter(x=>x.kind==='expense').reduce((a,x)=>a+x.amount,0),sav=m.filter(x=>x.kind==='saving').reduce((a,x)=>a+x.amount,0),junk=m.filter(x=>x.category==='Comida chatarra'&&weekKey(x.date)===weekKey(today())).length;document.getElementById('monthLabel').textContent=new Date().toLocaleDateString('es-CO',{month:'long',year:'numeric'});document.getElementById('incomeTotal').textContent=money(inc);document.getElementById('expenseTotal').textContent=money(exp);document.getElementById('balance').textContent=money(inc-exp);document.getElementById('available').textContent=money(inc-exp-sav);document.getElementById('savedTotal').textContent=money(sav);document.getElementById('goalPct').textContent=data.goal?Math.min(100,sav/data.goal*100).toFixed(1)+'%':'Meta sin definir';document.getElementById('goalBar').style.width=data.goal?Math.min(100,sav/data.goal*100)+'%':'0%';document.getElementById('goalText').textContent=data.goal?money(sav)+' aportados de '+money(data.goal):'Define tu meta en Ajustes.';document.getElementById('junkCount').textContent=junk+' / 2';document.getElementById('junkBar').style.width=Math.min(100,junk/2*100)+'%';document.getElementById('junkNote').textContent=junk>2?'Límite superado. ¡Ojo con los antojos!':junk===2?'Límite semanal alcanzado.':'Te quedan '+(2-junk)+' consumos esta semana.';document.getElementById('fixedTotal').textContent=money(fixed.reduce((a,x)=>a+x[1],0));renderDebts();renderHistory();document.getElementById('goalInput').value=data.goal||'';document.getElementById('funInput').value=data.fun}
+function weekKey(s){let d=new Date(s+'T12:00:00'),day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function renderDebts(){let items=[['Préstamo casa','casa',16,60,578000,30],['Préstamo Rappi','rappi',10,24,270000,20]];document.getElementById('debtList').innerHTML=items.map(([n,k,initial,total,fee,day])=>{let paid=data.debts[k],pct=paid/total*100;return `<div class="card"><b>${n}</b><div class="value green">${pct.toFixed(1)}%</div><div class="bar"><span style="width:${pct}%"></span></div><div class="small">${paid}/${total} cuotas · ${total-paid} pendientes · ${money(fee)}/mes · vence día ${day}</div><button class="secondary full" style="margin-top:10px" onclick="payDebt('${k}')">Registrar cuota pagada</button></div>`}).join('')}
+function payDebt(k){let total=k==='casa'?60:24,fee=k==='casa'?578000:270000;if(data.debts[k]>=total)return alert('Esta deuda ya está marcada como pagada.');if(!confirm('¿Confirmas que pagaste la cuota? Se registrará también como gasto.'))return;data.debts[k]++;data.moves.push({id:Date.now(),amount:fee,desc:k==='casa'?'Cuota préstamo casa':'Cuota préstamo Rappi',kind:'expense',date:today(),category:'Deuda'});persist()}
+function renderHistory(){let el=document.getElementById('movementList');if(!el)return;let f=document.getElementById('filterMonth')?.value||today().slice(0,7),arr=data.moves.filter(x=>monthOf(x.date)===f).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);el.innerHTML=arr.length?arr.map(x=>`<div class="listitem"><div><b>${x.desc}</b><div class="small">${x.date} · ${x.category}</div></div><div style="text-align:right"><b class="${x.kind==='income'?'green':x.kind==='saving'?'gold':'red'}">${x.kind==='income'?'+':x.kind==='saving'?'↗':'−'}${money(x.amount)}</b><br><button class="danger" style="padding:5px 8px;font-size:11px" onclick="delMove(${x.id})">Eliminar</button></div></div>`).join(''):'<div class="empty">No hay movimientos en este mes.</div>'}
+function delMove(id){if(confirm('¿Eliminar este movimiento?')){data.moves=data.moves.filter(x=>x.id!==id);persist()}}
+function saveGoal(){data.goal=Number(document.getElementById('goalInput').value)||0;persist();alert('Meta guardada.')}
+function saveFun(){data.fun=Number(document.getElementById('funInput').value)||0;persist();alert('Presupuesto guardado.')}
+function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='controlator-respaldo.json';a.click();URL.revokeObjectURL(a.href)}
+function restoreData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!d.moves||!d.debts)throw 0;data=d;persist();alert('Respaldo restaurado.')}catch{alert('Archivo de respaldo no válido.')}};r.readAsText(f)}
+function clearData(){if(confirm('¿Borrar todos los movimientos? Esta acción no se puede deshacer.')){data.moves=[];persist()}}
+setupCats();document.getElementById('date').value=today();document.getElementById('filterMonth').value=today().slice(0,7);render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js');
+</script>
+</body></html>
